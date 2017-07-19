@@ -12,6 +12,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "../Maximilian/maximilian.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <vector>
 
 
 //==============================================================================
@@ -26,11 +29,52 @@ public:
 
 	float noteOnVel;
 	maxiEnv osc1Env;
-	double osc1Val, osc1EnvVal;
+	double masterEnvVal;
+	typedef enum {
+			SINE,
+			SAW,
+			NOISE,
+			SQUARE,
+			TRIANGLE
+		} waveType;
+
+		typedef struct _mtxOsc {
+			maxiOsc osc;
+			waveType wave;
+			float freq;
+			float octave;
+			float semi;
+			float fine;
+			float amplitude;
+		} mtxOsc;
+
+		typedef struct _mtxEnv {
+			maxiEnv env;
+			Button::ButtonState enabled;
+		} mtxEnv;
+
+		typedef struct _mtxVoice {
+			maxiEnv env;
+			mtxOsc osc[3];
+			int midiNum;
+		} mtxVoice;
+
+	//mtxVoice voices[10];
+	std::vector<mtxVoice> voices;
+	int numVoices;
+	bool debugInt;
+	
+	//mtxEnv envArray[3]; //hard copy envelopes
+	mtxOsc masterOsc[3]; //hard copy oscillators
+	mtxEnv masterEnv;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
+
+	void shiftArray();
+	void addVoice(MidiMessage m);
+	void processVoices(float curSampleVal);
 
    #ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
@@ -62,12 +106,10 @@ public:
 
 private:
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FirstPluginAudioProcessor)
-	//maxiEnv osc1Env;
-	//double osc1EnvVal;
-	maxiOsc osc1;
-	float osc1Freq;
-	//Synthesiser synth;
-	//SynthesiserVoice voice;
-	//SynthesiserSound sound;
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FirstPluginAudioProcessor)
+
+		
+	//maxiOsc osc1;
+	//float osc1Freq;
+
 };

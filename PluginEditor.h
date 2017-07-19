@@ -20,13 +20,41 @@
 */
 class FirstPluginAudioProcessorEditor : public AudioProcessorEditor, 
 										public Slider::Listener, 
+										public ComboBox::Listener,
+										public Button::Listener,
 										private Timer
 {
 public:
     FirstPluginAudioProcessorEditor (FirstPluginAudioProcessor&);
     ~FirstPluginAudioProcessorEditor();
 
-	
+	void initOscillators();
+	void initLFO();
+	void initEnvelopes();
+	void initVolume();
+	void initFilters();
+	void initBounds();
+
+	typedef struct _oscSlider {
+		Slider amplitude;
+		Slider octave;
+		ComboBox wave;
+		Slider semi;
+		Slider fine;
+	} oscSlider;
+
+	typedef struct _envSlider {
+		Slider attack;
+		Slider decay;
+		Slider sustain;
+		Slider release;
+		ToggleButton enabled;
+	} envSlider;
+
+	oscSlider oscillatorSliders[3];
+	envSlider envelopeSliders[3];
+
+	customLookAndFeel customLookAndFeel;
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
@@ -34,19 +62,15 @@ public:
 private:	
 	
 	void sliderValueChanged(Slider* slider) override;
+	void comboBoxChanged(ComboBox* comboBox) override;
+	void buttonClicked(Button *button) override;
 	void updateGUI();
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     FirstPluginAudioProcessor& processor;
 
-	Slider osc1Amp;
-	Slider osc1Octave;
-	Slider osc1Wave;
-	Slider osc1Semi;
-	Slider osc1Fine;
-
-	customLookAndFeel customLookAndFeel;
+	
 	Image logo;
 	Label debug;
 
