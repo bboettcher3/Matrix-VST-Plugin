@@ -152,7 +152,11 @@ void FirstPluginAudioProcessorEditor::initEnvelopes() {
 		envelopeSliders[i].release.setLookAndFeel(&customLookAndFeel);
 
 		//swet env1 enabled parameters
+		//addAndMakeVisible(envelopeSliders[i].enabled);
+		//envelopeSliders[i].enabled.setColour(ToggleButton::ColourIds::tickColourId, Colours::black);
+		//envelopeSliders[i].enabled.setColour(ToggleButton::ColourIds::tickDisabledColourId, Colours::black);
 		if (i == 0) {
+			//envelopeSliders[i].enabled.setToggleState(true, false);
 		}
 
 			//add listener to slider

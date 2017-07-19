@@ -151,6 +151,7 @@ void FirstPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 			for (int i = 0; i < numVoices; i++) {
 				if (m.getNoteNumber() == voices[i].midiNum) {
 					voices[i].env.trigger = 0;
+					voices.erase(voices.begin() + i);
 					break;
 				}
 			}
@@ -212,6 +213,7 @@ void FirstPluginAudioProcessor::shiftArray()
 }
 
 void FirstPluginAudioProcessor::addVoice(MidiMessage m) {
+	voices.push_back(mtxVoice());
 	voices[0].env.amplitude = 0;
 	voices[0].env.setAttack(masterEnv.env.attackms);
 	voices[0].env.setDecay(masterEnv.env.decayms);
