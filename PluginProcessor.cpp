@@ -140,8 +140,10 @@ void FirstPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 		if (m.isNoteOn()) {
 			if (numVoices <= 10) {
 				//add voice, set trigger
+
 				//addVoice(m);
 				
+
 			}
 			
 		}
@@ -164,6 +166,7 @@ void FirstPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 	while (--numSamples >= 0)
 	{
 		curSampleVal = 0;
+
 		processVoices(curSampleVal);
 		
 		for (int i = buffer.getNumChannels(); --i >= 0;) {
@@ -210,6 +213,7 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 void FirstPluginAudioProcessor::shiftArray() 
 {
 
+
 }
 
 void FirstPluginAudioProcessor::addVoice(MidiMessage m) {
@@ -248,5 +252,6 @@ void FirstPluginAudioProcessor::processVoices(float curSampleVal) {
 			}
 		}
 		curSampleVal *= voices[i].env.adsr(1, voices[i].env.trigger);
+
 	}
 }

@@ -61,14 +61,11 @@ void FirstPluginAudioProcessorEditor::initOscillators() {
 		processor.masterOsc[i].fine = oscillatorSliders[i].fine.getValue();
 		processor.masterOsc[i].wave = processor.SINE;
 
+
 		addAndMakeVisible(debug);
 		debug.setColour(Label::textColourId, Colours::black);
 	}
 
-	//for (int i = 0; i < 10; i++) {
-	//	processor.voices[i].env.trigger = 0;
-	//	processor.voices[i].env.amplitude = 0;
-	//}
 
 }
 
@@ -152,6 +149,7 @@ void FirstPluginAudioProcessorEditor::initEnvelopes() {
 		envelopeSliders[i].release.setLookAndFeel(&customLookAndFeel);
 
 		//swet env1 enabled parameters
+
 		//addAndMakeVisible(envelopeSliders[i].enabled);
 		//envelopeSliders[i].enabled.setColour(ToggleButton::ColourIds::tickColourId, Colours::black);
 		//envelopeSliders[i].enabled.setColour(ToggleButton::ColourIds::tickDisabledColourId, Colours::black);

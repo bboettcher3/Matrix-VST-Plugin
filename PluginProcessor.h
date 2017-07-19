@@ -17,6 +17,7 @@
 #include <vector>
 
 
+
 //==============================================================================
 /**
 */
@@ -61,6 +62,9 @@ public:
 
 	//mtxVoice voices[10];
 	std::vector<mtxVoice> voices;
+
+	//mtxVoice voices[10];
+
 	int numVoices;
 	bool debugInt;
 	
@@ -73,8 +77,10 @@ public:
     void releaseResources() override;
 
 	void shiftArray();
+
 	void addVoice(MidiMessage m);
 	void processVoices(float curSampleVal);
+
 
    #ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
