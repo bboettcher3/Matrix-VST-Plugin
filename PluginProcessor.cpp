@@ -141,7 +141,7 @@ void FirstPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 			if (numVoices <= 10) {
 				//add voice, set trigger
 
-				//addVoice(m);
+				addVoice(m);
 				
 
 			}
@@ -167,7 +167,7 @@ void FirstPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 	{
 		curSampleVal = 0;
 
-		processVoices(curSampleVal);
+		curSampleVal += processVoices(curSampleVal);
 		
 		for (int i = buffer.getNumChannels(); --i >= 0;) {
 			buffer.addSample(i, curSample, curSampleVal);
@@ -235,7 +235,7 @@ void FirstPluginAudioProcessor::addVoice(MidiMessage m) {
 	numVoices++;
 }
 
-void FirstPluginAudioProcessor::processVoices(float curSampleVal) {
+float FirstPluginAudioProcessor::processVoices(float curSampleVal) {
 	for (int i = 0; i < numVoices; i++) {
 		for (int j = 0; j < 3; j++) {
 			switch (voices[i].osc[j].wave) {
@@ -252,6 +252,6 @@ void FirstPluginAudioProcessor::processVoices(float curSampleVal) {
 			}
 		}
 		curSampleVal *= voices[i].env.adsr(1, voices[i].env.trigger);
-
+		return curSampleVal;
 	}
 }

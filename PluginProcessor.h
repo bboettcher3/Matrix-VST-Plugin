@@ -79,7 +79,7 @@ public:
 	void shiftArray();
 
 	void addVoice(MidiMessage m);
-	void processVoices(float curSampleVal);
+	float processVoices(float curSampleVal);
 
 
    #ifndef JucePlugin_PreferredChannelConfigurations

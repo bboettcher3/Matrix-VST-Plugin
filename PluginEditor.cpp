@@ -204,7 +204,10 @@ void FirstPluginAudioProcessorEditor::resized()
 }
 
 void FirstPluginAudioProcessorEditor::updateGUI() {
-	//debug.setText((String)(processor.voices[0].midiNum), dontSendNotification);
+	if (processor.numVoices >= 1) {
+		debug.setText((String)(processor.voices[0].env.amplitude), dontSendNotification);
+	}
+	
 }
 
 //==============================================================================
