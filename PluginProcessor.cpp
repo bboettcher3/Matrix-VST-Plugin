@@ -24,7 +24,7 @@ FirstPluginAudioProcessor::FirstPluginAudioProcessor()
                        )
 #endif
 {
-	//envArray[0].env.amplitude = 0;
+
 	numVoices = 0;
 }
 
@@ -210,28 +210,23 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     return new FirstPluginAudioProcessor();
 }
 
-void FirstPluginAudioProcessor::shiftArray() 
-{
-
-
-}
 
 void FirstPluginAudioProcessor::addVoice(MidiMessage m) {
-	voices.push_back(mtxVoice());
-	voices[0].env.amplitude = 0;
-	voices[0].env.setAttack(masterEnv.env.attackms);
-	voices[0].env.setDecay(masterEnv.env.decayms);
-	voices[0].env.setSustain(masterEnv.env.sustain);
-	voices[0].env.setRelease(masterEnv.env.releasems);
-	voices[0].env.trigger = 1;
-	voices[0].midiNum = m.getNoteNumber();
+	int size = voices.size();
+	mtxVoice temp;
+	temp.env.amplitude = 0;
+	temp.env.setAttack(masterEnv.env.attackms);
+	temp.env.setDecay(masterEnv.env.decayms);
+	temp.env.setSustain(masterEnv.env.sustain);
+	temp.env.setRelease(masterEnv.env.releasems);
+	temp.env.trigger = 1;
+	temp.midiNum = m.getNoteNumber();
 	for (int i = 0; i < 3; i++) {
 		//set freq of voice
-		voices[0].osc[i].freq = m.getMidiNoteInHertz(m.getNoteNumber() + masterOsc[i].semi + 12 * masterOsc[i].octave) + 20 * masterOsc[i].fine;
-		voices[0].osc[i].osc.phaseReset(0);
-		//voices[0].osc[i].wave = masterOsc[i].wave;
-		//voices[0].osc[i].amplitude = masterOsc[i].amplitude;
+		temp.osc[i].freq = m.getMidiNoteInHertz(m.getNoteNumber() + masterOsc[i].semi + 12 * masterOsc[i].octave) + 20 * masterOsc[i].fine;
+		temp.osc[i].osc.phaseReset(0);
 	}
+	voices.push_back(temp);
 
 	numVoices++;
 }
@@ -253,6 +248,6 @@ float FirstPluginAudioProcessor::processVoices(float curSampleVal) {
 			}
 		}
 		curSampleVal *= voices[i].env.adsr(1, voices[i].env.trigger);
-		return curSampleVal;
 	}
+	return curSampleVal;
 }

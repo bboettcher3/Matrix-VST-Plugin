@@ -76,8 +76,6 @@ public:
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
-	void shiftArray();
-
 	void addVoice(MidiMessage m);
 	float processVoices(float curSampleVal);
 

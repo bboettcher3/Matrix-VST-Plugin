@@ -202,7 +202,10 @@ void FirstPluginAudioProcessorEditor::resized()
 
 void FirstPluginAudioProcessorEditor::updateGUI() {
 	if (processor.numVoices >= 1) {
-		debug.setText((String)(processor.numVoices), dontSendNotification);
+		//debug.setText((String)(processor.processVoices(0)), dontSendNotification);
+	}
+	else {
+		debug.setText("0", dontSendNotification);
 	}
 	
 }
