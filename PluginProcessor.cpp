@@ -140,9 +140,7 @@ void FirstPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 		if (m.isNoteOn()) {
 			if (numVoices <= 10) {
 				//add voice, set trigger
-
 				addVoice(m);
-				
 
 			}
 			
@@ -154,8 +152,10 @@ void FirstPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 				if (m.getNoteNumber() == voices[i].midiNum) {
 					voices[i].env.trigger = 0;
 					voices.erase(voices.begin() + i);
+					//debugInt = true;
 					break;
 				}
+				//debugInt = false;
 			}
 
 			numVoices--;
@@ -228,8 +228,9 @@ void FirstPluginAudioProcessor::addVoice(MidiMessage m) {
 	for (int i = 0; i < 3; i++) {
 		//set freq of voice
 		voices[0].osc[i].freq = m.getMidiNoteInHertz(m.getNoteNumber() + masterOsc[i].semi + 12 * masterOsc[i].octave) + 20 * masterOsc[i].fine;
-		voices[0].osc[i].wave = masterOsc[i].wave;
-		voices[0].osc[i].amplitude = masterOsc[i].amplitude;
+		voices[0].osc[i].osc.phaseReset(0);
+		//voices[0].osc[i].wave = masterOsc[i].wave;
+		//voices[0].osc[i].amplitude = masterOsc[i].amplitude;
 	}
 
 	numVoices++;
@@ -238,16 +239,16 @@ void FirstPluginAudioProcessor::addVoice(MidiMessage m) {
 float FirstPluginAudioProcessor::processVoices(float curSampleVal) {
 	for (int i = 0; i < numVoices; i++) {
 		for (int j = 0; j < 3; j++) {
-			switch (voices[i].osc[j].wave) {
-			case SINE: curSampleVal += voices[i].osc[j].osc.sinewave(voices[i].osc[j].freq) * voices[i].osc[j].amplitude;
+			switch (masterOsc[j].wave) {
+			case SINE: curSampleVal += voices[i].osc[j].osc.sinewave(voices[i].osc[j].freq) * masterOsc[j].amplitude;
 				break;
-			case SAW: curSampleVal += voices[i].osc[j].osc.saw(voices[i].osc[j].freq) * voices[i].osc[j].amplitude;
+			case SAW: curSampleVal += voices[i].osc[j].osc.saw(voices[i].osc[j].freq) * masterOsc[j].amplitude;
 				break;
-			case NOISE: curSampleVal += voices[i].osc[j].osc.noise() * voices[i].osc[j].amplitude;
+			case NOISE: curSampleVal += voices[i].osc[j].osc.noise() * masterOsc[j].amplitude;
 				break;
-			case SQUARE: curSampleVal += voices[i].osc[j].osc.square(voices[i].osc[j].freq) * voices[i].osc[j].amplitude;
+			case SQUARE: curSampleVal += voices[i].osc[j].osc.square(voices[i].osc[j].freq) * masterOsc[j].amplitude;
 				break;
-			case TRIANGLE: curSampleVal += voices[i].osc[j].osc.triangle(voices[i].osc[j].freq) * voices[i].osc[j].amplitude;
+			case TRIANGLE: curSampleVal += voices[i].osc[j].osc.triangle(voices[i].osc[j].freq) * masterOsc[j].amplitude;
 				break;
 			}
 		}

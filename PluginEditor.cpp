@@ -37,32 +37,29 @@ FirstPluginAudioProcessorEditor::~FirstPluginAudioProcessorEditor()
 }
 
 void FirstPluginAudioProcessorEditor::comboBoxChanged(ComboBox* comboBox) {
-	for (int i = 0; i < processor.numVoices; i++) {
-		for (int j = 0; j < 3; j++) {
+
+		for (int i = 0; i < 3; i++) {
 			if (comboBox == &oscillatorSliders[i].wave) {
 				switch (oscillatorSliders[i].wave.getSelectedId()) {
 				case 1: 
-					processor.voices[i].osc[j].wave = processor.SINE;
+					processor.masterOsc[i].wave = processor.SINE;
 					break;
 				case 2: 
-					processor.voices[i].osc[j].wave = processor.SAW;
+					processor.masterOsc[i].wave = processor.SAW;
 					break;
 				case 3: 
-					processor.voices[i].osc[j].wave = processor.SQUARE;
+					processor.masterOsc[i].wave = processor.SQUARE;
 					break;
 				case 4: 
-					processor.voices[i].osc[j].wave = processor.NOISE;
+					processor.masterOsc[i].wave = processor.NOISE;
 					break;
 				case 5:
-					processor.voices[i].osc[j].wave = processor.TRIANGLE;
+					processor.masterOsc[i].wave = processor.TRIANGLE;
 					break;
 				}
 			}
-			processor.voices[i].osc[j].osc.phaseReset(0);
+			processor.masterOsc[i].osc.phaseReset(0);
 		}
-		
-		
-	}
 	
 }
 
@@ -205,7 +202,7 @@ void FirstPluginAudioProcessorEditor::resized()
 
 void FirstPluginAudioProcessorEditor::updateGUI() {
 	if (processor.numVoices >= 1) {
-		debug.setText((String)(processor.voices[0].env.amplitude), dontSendNotification);
+		debug.setText((String)(processor.numVoices), dontSendNotification);
 	}
 	
 }
