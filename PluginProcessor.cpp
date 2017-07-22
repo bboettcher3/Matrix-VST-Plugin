@@ -151,18 +151,20 @@ void FirstPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 			for (int i = 0; i < numVoices; i++) {
 				if (m.getNoteNumber() == voices[i].midiNum) {
 					voices[i].env.trigger = 0;
-					voices.erase(voices.begin() + i);
+					//voices.erase(voices.begin() + i);
 					//debugInt = true;
 					break;
 				}
 				//debugInt = false;
 			}
 
-			numVoices--;
+			//numVoices--;
 			
 		}
 	}
-	
+	//get rid of voices with a tiny amplitude
+	eraseStragglers();
+
 	while (--numSamples >= 0)
 	{
 		curSampleVal = 0;
@@ -210,25 +212,43 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     return new FirstPluginAudioProcessor();
 }
 
+void FirstPluginAudioProcessor::eraseStragglers() {
+	for (int i = 0; i < numVoices; i++) {
+		if ((voices[i].env.trigger == 0) && (voices[i].env.amplitude < .01)) {
+			voices.erase(voices.begin() + i);
+			numVoices--;
+		}
+	}
+}
 
 void FirstPluginAudioProcessor::addVoice(MidiMessage m) {
-	int size = voices.size();
-	mtxVoice temp;
-	temp.env.amplitude = 0;
-	temp.env.setAttack(masterEnv.env.attackms);
-	temp.env.setDecay(masterEnv.env.decayms);
-	temp.env.setSustain(masterEnv.env.sustain);
-	temp.env.setRelease(masterEnv.env.releasems);
-	temp.env.trigger = 1;
-	temp.midiNum = m.getNoteNumber();
-	for (int i = 0; i < 3; i++) {
-		//set freq of voice
-		temp.osc[i].freq = m.getMidiNoteInHertz(m.getNoteNumber() + masterOsc[i].semi + 12 * masterOsc[i].octave) + 20 * masterOsc[i].fine;
-		temp.osc[i].osc.phaseReset(0);
+	bool isDuplicate = false;
+	for (int i = 0; i < numVoices; i++) {
+		if (voices[i].midiNum == m.getNoteNumber()) {
+			voices[i].env.amplitude = 0;
+			voices[i].env.trigger = 1;
+			isDuplicate = true;
+		}
 	}
-	voices.push_back(temp);
-
-	numVoices++;
+	if (!isDuplicate) {
+		mtxVoice temp;
+		temp.env.amplitude = 0;
+		temp.env.setAttack(masterEnv.env.attackms);
+		temp.env.setDecay(masterEnv.env.decayms);
+		temp.env.setSustain(masterEnv.env.sustain);
+		temp.env.setRelease(masterEnv.env.releasems);
+		temp.env.trigger = 1;
+		temp.midiNum = m.getNoteNumber();
+		for (int i = 0; i < 3; i++) {
+			//set freq of voice
+			temp.osc[i].freq = m.getMidiNoteInHertz(m.getNoteNumber() + masterOsc[i].semi + 12 * masterOsc[i].octave) + 20 * masterOsc[i].fine;
+			temp.osc[i].osc.phaseReset(0);
+		}
+		voices.push_back(temp);
+			
+		numVoices++;
+	}
+	
 }
 
 float FirstPluginAudioProcessor::processVoices(float curSampleVal) {

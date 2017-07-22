@@ -78,6 +78,7 @@ public:
 
 	void addVoice(MidiMessage m);
 	float processVoices(float curSampleVal);
+	void eraseStragglers();
 
 
    #ifndef JucePlugin_PreferredChannelConfigurations
