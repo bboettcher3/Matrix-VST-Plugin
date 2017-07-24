@@ -110,6 +110,20 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+	// Parameters to save
+		//osc params
+	AudioParameterInt* octave1Param; AudioParameterInt* octave2Param; AudioParameterInt* octave3Param;
+	AudioParameterInt* semi1Param; AudioParameterInt* semi2Param; AudioParameterInt* semi3Param;
+	AudioParameterFloat* fine1Param, fine2Param, fine3Param;
+	AudioParameterFloat* amp1Param, amp2Param, amp3Param;
+	AudioParameterInt* wave1Param, wave2Param, wave3Param;
+		//env params
+	AudioParameterFloat* attack1Param, attack2Param, attack3Param;
+	AudioParameterFloat* decay1Param, decay2Param, decay3Param;
+	AudioParameterFloat* sustain1Param, sustain2Param, sustain3Param;
+	AudioParameterFloat* release1Param, release2Param, release3Param;
+
+
 private:
     //==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FirstPluginAudioProcessor)

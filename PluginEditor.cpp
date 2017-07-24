@@ -207,7 +207,7 @@ void FirstPluginAudioProcessorEditor::updateGUI() {
 	//		numFree++;
 	//	}
 	//}
-	debug.setText((String)processor.voices[1].isFree, dontSendNotification);
+	//debug.setText((String)processor.voices[1].isFree, dontSendNotification);
 }
 
 //==============================================================================
