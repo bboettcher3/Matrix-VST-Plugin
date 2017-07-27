@@ -11,7 +11,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-
 //==============================================================================
 FirstPluginAudioProcessorEditor::FirstPluginAudioProcessorEditor(FirstPluginAudioProcessor& p)
 	: AudioProcessorEditor(&p), processor(p)
@@ -66,29 +65,29 @@ void FirstPluginAudioProcessorEditor::comboBoxChanged(ComboBox* comboBox) {
 void FirstPluginAudioProcessorEditor::sliderValueChanged(Slider* slider) {
 
 		for (int i = 0; i < 3; i++) {
-			if (slider == &oscillatorSliders[i].amplitude) {
-				processor.masterOsc[i].amplitude = oscillatorSliders[i].amplitude.getValue();
+			if (slider == (Slider*)&oscillatorSliders[i].amplitude) {
+				processor.masterOsc[i].amplitude = oscillatorSliders[i].amplitude->getValue();
 			}
-			else if (slider == &oscillatorSliders[i].octave) {
-				processor.masterOsc[i].octave = oscillatorSliders[i].octave.getValue();
+			else if (slider == (Slider*)&oscillatorSliders[i].octave) {
+				processor.masterOsc[i].octave = oscillatorSliders[i].octave->getValue();
 			}
-			else if (slider == &oscillatorSliders[i].semi) {
-				processor.masterOsc[i].semi = oscillatorSliders[i].semi.getValue();
+			else if (slider == (Slider*)&oscillatorSliders[i].semi) {
+				processor.masterOsc[i].semi = oscillatorSliders[i].semi->getValue();
 			}
-			else if (slider == &oscillatorSliders[i].fine) {
-				processor.masterOsc[i].fine = oscillatorSliders[i].fine.getValue();
+			else if (slider == (Slider*)&oscillatorSliders[i].fine) {
+				processor.masterOsc[i].fine = oscillatorSliders[i].fine->getValue();
 			}
-			else if (slider == &envelopeSliders[i].attack) {
-				processor.masterEnv.env.setAttack(envelopeSliders[i].attack.getValue());
+			else if (slider == (Slider*)&envelopeSliders[i].attack) {
+				processor.masterEnv.env.setAttack(envelopeSliders[i].attack->getValue());
 			}
-			else if (slider == &envelopeSliders[i].decay) {
-				processor.masterEnv.env.setDecay(envelopeSliders[i].decay.getValue());
+			else if (slider == (Slider*)&envelopeSliders[i].decay) {
+				processor.masterEnv.env.setDecay(envelopeSliders[i].decay->getValue());
 			}
-			else if (slider == &envelopeSliders[i].sustain) {
-				processor.masterEnv.env.setSustain(envelopeSliders[i].sustain.getValue());
+			else if (slider == (Slider*)&envelopeSliders[i].sustain) {
+				processor.masterEnv.env.setSustain(envelopeSliders[i].sustain->getValue());
 			}
-			else if (slider == &envelopeSliders[i].release) {
-				processor.masterEnv.env.setRelease(envelopeSliders[i].release.getValue());
+			else if (slider == (Slider*)&envelopeSliders[i].release) {
+				processor.masterEnv.env.setRelease(envelopeSliders[i].release->getValue());
 			}
 		}
 

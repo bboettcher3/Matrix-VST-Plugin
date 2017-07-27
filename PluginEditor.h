@@ -28,6 +28,8 @@ public:
     FirstPluginAudioProcessorEditor (FirstPluginAudioProcessor&);
     ~FirstPluginAudioProcessorEditor();
 
+	class ParameterSlider;
+
 	void initOscillators();
 	void initLFO();
 	void initEnvelopes();
@@ -36,18 +38,18 @@ public:
 	void initBounds();
 
 	typedef struct _oscSlider {
-		Slider amplitude;
-		Slider octave;
+		ScopedPointer<ParameterSlider> amplitude;
+		ScopedPointer<ParameterSlider> octave;
 		ComboBox wave;
-		Slider semi;
-		Slider fine;
+		ScopedPointer<ParameterSlider> semi;
+		ScopedPointer<ParameterSlider> fine;
 	} oscSlider;
 
 	typedef struct _envSlider {
-		Slider attack;
-		Slider decay;
-		Slider sustain;
-		Slider release;
+		ScopedPointer<ParameterSlider> attack;
+		ScopedPointer<ParameterSlider> decay;
+		ScopedPointer<ParameterSlider> sustain;
+		ScopedPointer<ParameterSlider> release;
 		ToggleButton enabled;
 	} envSlider;
 

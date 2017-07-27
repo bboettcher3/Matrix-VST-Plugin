@@ -80,7 +80,7 @@ public:
 	void addVoice(MidiMessage m);
 	float processVoices(float curSampleVal);
 	void eraseStragglers();
-
+	void addParameters();
 
    #ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
@@ -112,16 +112,16 @@ public:
 
 	// Parameters to save
 		//osc params
-	AudioParameterInt* octave1Param; AudioParameterInt* octave2Param; AudioParameterInt* octave3Param;
-	AudioParameterInt* semi1Param; AudioParameterInt* semi2Param; AudioParameterInt* semi3Param;
-	AudioParameterFloat* fine1Param, fine2Param, fine3Param;
-	AudioParameterFloat* amp1Param, amp2Param, amp3Param;
-	AudioParameterInt* wave1Param, wave2Param, wave3Param;
+	AudioParameterInt* octave1Param, *octave2Param, *octave3Param;
+	AudioParameterInt* semi1Param, *semi2Param, *semi3Param;
+	AudioParameterFloat* fine1Param, *fine2Param, *fine3Param;
+	AudioParameterFloat* amp1Param, *amp2Param, *amp3Param;
+	AudioParameterInt* wave1Param, *wave2Param, *wave3Param;
 		//env params
-	AudioParameterFloat* attack1Param, attack2Param, attack3Param;
-	AudioParameterFloat* decay1Param, decay2Param, decay3Param;
-	AudioParameterFloat* sustain1Param, sustain2Param, sustain3Param;
-	AudioParameterFloat* release1Param, release2Param, release3Param;
+	AudioParameterFloat* attack1Param, *attack2Param, *attack3Param;
+	AudioParameterFloat* decay1Param, *decay2Param, *decay3Param;
+	AudioParameterFloat* sustain1Param, *sustain2Param, *sustain3Param;
+	AudioParameterFloat* release1Param, *release2Param, *release3Param;
 
 
 private:

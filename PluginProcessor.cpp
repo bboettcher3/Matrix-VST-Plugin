@@ -21,9 +21,9 @@ FirstPluginAudioProcessor::FirstPluginAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
 #endif 
-	/*octave1Param(NULL), octave2Param(0), octave3Param(nullptr),
+	octave1Param(nullptr), octave2Param(nullptr), octave3Param(nullptr),
  semi1Param(nullptr), semi2Param(nullptr), semi3Param(nullptr),
  fine1Param(nullptr), fine2Param(nullptr), fine3Param(nullptr),
  amp1Param(nullptr), amp2Param(nullptr), amp3Param(nullptr),
@@ -31,11 +31,10 @@ FirstPluginAudioProcessor::FirstPluginAudioProcessor()
  attack1Param(nullptr), attack2Param(nullptr), attack3Param(nullptr),
  decay1Param(nullptr), decay2Param(nullptr), decay3Param(nullptr),
  sustain1Param(nullptr), sustain2Param(nullptr), sustain3Param(nullptr),
- release1Param(nullptr), release2Param(nullptr), release3Param(nullptr) */
+ release1Param(nullptr), release2Param(nullptr), release3Param(nullptr) 
 {
-	addParameter(octave1Param = new AudioParameterInt("octave1", "Octave1", -3, 3, 0));
-	addParameter(octave2Param = new AudioParameterInt("octave2", "Octave2", -3, 3, 0));
-	addParameter(octave3Param = new AudioParameterInt("octave3", "Octave3", -3, 3, 0));
+	addParameters();
+	
 	numVoices = 0;
 }
 
@@ -201,16 +200,41 @@ AudioProcessorEditor* FirstPluginAudioProcessor::createEditor()
 //==============================================================================
 void FirstPluginAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+	// You should use this method to store your parameters in the memory block.
+	// Here's an example of how you can use XML to make it easy and more robust:
+
+	// Create an outer XML element..
+	XmlElement xml("MYPLUGINSETTINGS");
+
+	// Store the values of all our parameters, using their param ID as the XML attribute
+	for (int i = 0; i < getNumParameters(); ++i)
+		if (AudioProcessorParameterWithID* p = dynamic_cast<AudioProcessorParameterWithID*> (getParameters().getUnchecked(i)))
+			xml.setAttribute(p->paramID, p->getValue());
+
+	// then use this helper function to stuff it into the binary blob and return it..
+	copyXmlToBinary(xml, destData);
 }
 
 void FirstPluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+	// You should use this method to restore your parameters from this memory block,
+	// whose contents will have been created by the getStateInformation() call.
 
+	// This getXmlFromBinary() helper function retrieves our XML from the binary blob..
+	ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+	if (xmlState != nullptr)
+	{
+		// make sure that it's actually our type of XML object..
+		if (xmlState->hasTagName("MYPLUGINSETTINGS"))
+		{
+
+			// Now reload our parameters..
+			for (int i = 0; i < getNumParameters(); ++i)
+				if (AudioProcessorParameterWithID* p = dynamic_cast<AudioProcessorParameterWithID*> (getParameters().getUnchecked(i)))
+					p->setValue((float)xmlState->getDoubleAttribute(p->paramID, p->getValue()));
+		}
+	}
 }
 
 //==============================================================================
