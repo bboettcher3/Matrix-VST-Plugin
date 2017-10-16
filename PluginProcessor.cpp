@@ -138,10 +138,11 @@ void FirstPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 {
 	//editor.debug.setText("got em", dontSendNotification);
 
-	buffer.clear();
+	//buffer.clear();
 	int time;
 	MidiMessage m;
 	float curSampleVal = 0;
+	
 
 	int numSamples = buffer.getNumSamples();
 	int curSample = 0;
@@ -157,14 +158,17 @@ void FirstPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
 		else if (m.isNoteOff()) {
 			//remove voice based on freq
 
-			for (int i = 0; i < 10; i++) {
-				if (m.getNoteNumber() == voices[i].midiNum && !voices[i].isFree) {
+			for (int i = 0; i < numVoices; i++) {
+				if (m.getNoteNumber() == voices[i].midiNum) {
 					voices[i].env.trigger = 0;
+					//voices.erase(voices.begin() + i);
 					//debugInt = true;
 					break;
 				}
 				//debugInt = false;
 			}
+
+			//numVoices--;
 			
 		}
 	}
@@ -245,10 +249,9 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 }
 
 void FirstPluginAudioProcessor::eraseStragglers() {
-	for (int i = 0; i < 10; i++) {
-		if ((voices[i].env.trigger == 0) && (voices[i].env.amplitude < .01) && !(voices[i].isFree)) {
-
-			voices[i].isFree = true;
+	for (int i = 0; i < numVoices; i++) {
+		if ((voices[i].env.trigger == 0) && (voices[i].env.amplitude < .01)) {
+			voices.erase(voices.begin() + i);
 			numVoices--;
 		}
 	}
@@ -256,62 +259,51 @@ void FirstPluginAudioProcessor::eraseStragglers() {
 
 void FirstPluginAudioProcessor::addVoice(MidiMessage m) {
 	bool isDuplicate = false;
-	for (int i = 0; i < 10; i++) {
-		if (voices[i].midiNum == m.getNoteNumber() && !voices[i].isFree) {
+	for (int i = 0; i < numVoices; i++) {
+		if (voices[i].midiNum == m.getNoteNumber()) {
+			voices[i].env.amplitude = 0;
 			voices[i].env.trigger = 1;
 			isDuplicate = true;
-			break;
 		}
 	}
 	if (!isDuplicate) {
-		for (int i = 0; i < 10; i++) {
-			if (voices[i].isFree) {
-				voices[i].isFree = false;
-				voices[i].env.amplitude = 0;
-				voices[i].env.setAttack(masterEnv.env.attackms);
-				voices[i].env.setDecay(masterEnv.env.decayms);
-				voices[i].env.setSustain(masterEnv.env.sustain);
-				voices[i].env.setRelease(masterEnv.env.releasems);
-				voices[i].env.trigger = 1;
-				voices[i].midiNum = m.getNoteNumber();
-				for (int j = 0; j < 3; j++) {
-					//set freq of voice
-					voices[i].osc[j].freq = m.getMidiNoteInHertz(m.getNoteNumber() + masterOsc[j].semi + 12 * masterOsc[j].octave) + 20 * masterOsc[j].fine;
-					voices[i].osc[j].osc.phaseReset(0);
-				}
-				numVoices++;
-				break;
-			}
+		mtxVoice temp;
+		temp.env.amplitude = 0;
+		temp.env.setAttack(masterEnv.env.attackms);
+		temp.env.setDecay(masterEnv.env.decayms);
+		temp.env.setSustain(masterEnv.env.sustain);
+		temp.env.setRelease(masterEnv.env.releasems);
+		temp.env.trigger = 1;
+		temp.midiNum = m.getNoteNumber();
+		for (int i = 0; i < 3; i++) {
+			//set freq of voice
+			temp.osc[i].freq = m.getMidiNoteInHertz(m.getNoteNumber() + masterOsc[i].semi + 12 * masterOsc[i].octave) + 20 * masterOsc[i].fine;
+			temp.osc[i].osc.phaseReset(0);
 		}
+		voices.push_back(temp);
 			
-		
+		numVoices++;
 	}
 	
 }
 
 float FirstPluginAudioProcessor::processVoices(float curSampleVal) {
-	float innerSampleVal = 0;
-	for (int i = 0; i < 10; i++) {
-		if (!voices[i].isFree) {
-			innerSampleVal = 0;
-			for (int j = 0; j < 3; j++) {
-				switch (masterOsc[j].wave) {
-				case SINE: innerSampleVal += voices[i].osc[j].osc.sinewave(voices[i].osc[j].freq) * masterOsc[j].amplitude;
-					break;
-				case SAW: innerSampleVal += voices[i].osc[j].osc.saw(voices[i].osc[j].freq) * masterOsc[j].amplitude;
-					break;
-				case NOISE: innerSampleVal += voices[i].osc[j].osc.noise() * masterOsc[j].amplitude;
-					break;
-				case SQUARE: innerSampleVal += voices[i].osc[j].osc.square(voices[i].osc[j].freq) * masterOsc[j].amplitude;
-					break;
-				case TRIANGLE: innerSampleVal += voices[i].osc[j].osc.triangle(voices[i].osc[j].freq) * masterOsc[j].amplitude;
-					break;
-				}
+	for (int i = 0; i < numVoices; i++) {
+		for (int j = 0; j < 3; j++) {
+			switch (masterOsc[j].wave) {
+			case SINE: curSampleVal += voices[i].osc[j].osc.sinewave(voices[i].osc[j].freq) * masterOsc[j].amplitude;
+				break;
+			case SAW: curSampleVal += voices[i].osc[j].osc.saw(voices[i].osc[j].freq) * masterOsc[j].amplitude;
+				break;
+			case NOISE: curSampleVal += voices[i].osc[j].osc.noise() * masterOsc[j].amplitude;
+				break;
+			case SQUARE: curSampleVal += voices[i].osc[j].osc.square(voices[i].osc[j].freq) * masterOsc[j].amplitude;
+				break;
+			case TRIANGLE: curSampleVal += voices[i].osc[j].osc.triangle(voices[i].osc[j].freq) * masterOsc[j].amplitude;
+				break;
 			}
-			innerSampleVal *= voices[i].env.adsr(1, voices[i].env.trigger);
-			curSampleVal += innerSampleVal;
 		}
-		
+		curSampleVal *= voices[i].env.adsr(1, voices[i].env.trigger);
 	}
 	return curSampleVal;
 }

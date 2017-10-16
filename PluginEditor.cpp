@@ -200,13 +200,15 @@ void FirstPluginAudioProcessorEditor::resized()
 }
 
 void FirstPluginAudioProcessorEditor::updateGUI() {
-	//int numFree = 0;
-	//for (int i = 0; i < 10; i++) {
-	//	if (processor.voices[i].isFree) {
-	//		numFree++;
-	//	}
-	//}
-	//debug.setText((String)processor.voices[1].isFree, dontSendNotification);
+
+	if (processor.numVoices >= 1) {
+		//debug.setText((String)(processor.processVoices(0)), dontSendNotification);
+	}
+	else {
+		debug.setText("0", dontSendNotification);
+	}
+	
+
 }
 
 //==============================================================================

@@ -58,13 +58,12 @@ public:
 			maxiEnv env;
 			mtxOsc osc[3];
 			int midiNum;
-			bool isFree;
 		} mtxVoice;
 
 	//mtxVoice voices[10];
-	//std::vector<mtxVoice> voices;
+	std::vector<mtxVoice> voices;
 
-	mtxVoice voices[10];
+	//mtxVoice voices[10];
 
 	int numVoices;
 	bool debugInt;
